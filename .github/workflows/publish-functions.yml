@@ -1,0 +1,100 @@
+name: Publish Functions
+
+on:
+  workflow_run:
+    workflows: [Prerelease, Release Minor, Release Major, Release Minor & Major, Hotfix]
+    types: [completed]
+
+jobs:
+  prepare_functions:
+    runs-on: uhg-runner
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      matrix: ${{ steps.prepare-zips.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          skip_gh_install: true
+
+      - name: Download artifacts
+        continue-on-error: true
+        run: gh run download ${{ github.event.workflow_run.id }} -n functions-dist-files -D functions-dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for functions artifacts
+        id: functions_artifacts
+        run: |
+          [ -d "./functions-dist" ] && echo "exist=true" >> $GITHUB_OUTPUT || echo "exist=false" >> $GITHUB_OUTPUT
+
+      - name: Prepare Zips for Azure
+        if: steps.functions_artifacts.outputs.exist == 'true'
+        id: prepare-zips
+        run: |
+          echo $(npx @optum-rx-platform/cli@latest run-script publish-functions --quiet) >> "$GITHUB_OUTPUT"
+
+      - name: Upload the Azure Functions Zip artifacts
+        if: steps.functions_artifacts.outputs.exist == 'true'
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: function-zip-file
+          path: functions-dist/**/*.zip
+
+  publish_functions:
+    runs-on: uhg-runner
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: prepare_functions
+    strategy:
+      matrix: ${{ fromJson(needs.prepare_functions.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download Azure Functions Zip
+        uses: actions/download-artifact@v4
+        with:
+          name: function-zip-file
+          path: functions-dist
+      
+      - name: Check for functions artifacts
+        id: functions_artifacts
+        run: |
+          [ -d "./functions-dist" ] && echo "exist=true" >> $GITHUB_OUTPUT || echo "exist=false" >> $GITHUB_OUTPUT
+
+      - name: (DEBUG) Display the path
+        if: steps.functions_artifacts.outputs.exist == 'true'
+        run: echo ${{ matrix.path }}
+
+      - name: Login to Azure
+        if: steps.functions_artifacts.outputs.exist == 'true'
+        uses: azure/cli@v2
+        env:
+          USER: ${{ secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_ID }}
+          SECRET: ${{ secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET }}
+          TENANT: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT_ID }}
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az login --service-principal -u ${{ env.USER }} -p ${{ env.SECRET }} --tenant ${{ env.TENANT }}
+
+      - name: Publish Functions to Azure
+        if: steps.functions_artifacts.outputs.exist == 'true'
+        uses: azure/cli@v2
+        env:
+          APPNAME: ${{ secrets.APP_NAME }}
+          AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az functionapp deployment source config-zip -g ${{ env.AZURE_RESOURCE_GROUP }} -n ${{ env.APPNAME }} --src "${{ matrix.path }}"
+
+      - name: Azure logout
+        if: steps.functions_artifacts.outputs.exist == 'true'
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az logout

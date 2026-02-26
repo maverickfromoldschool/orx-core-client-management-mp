@@ -1,0 +1,57 @@
+{
+  "name": "@optum-rx-core/orx-core-notification",
+  "version": "1.0.1",
+  "description": "A robust notification system built with MUI v5 Snackbar, React Context, and hooks. Designed following SOLID principles and industry best practices.",
+  "repository": "",
+  "author": "rommel_detorres@optum.com",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "main": "src/index",
+  "types": "src/index.ts",
+  "files": [
+    "tsconfig.json",
+    "*.js",
+    "*.js.map",
+    "*.d.ts",
+    "**/*.js",
+    "**/*.js.map",
+    "**/*.d.ts"
+  ],
+  "assets": [
+    "README.md"
+  ],
+  "keywords": [
+    "notification",
+    "snackbar",
+    "toast",
+    "alert",
+    "mui",
+    "material-ui",
+    "react",
+    "context",
+    "hooks",
+    "typescript"
+  ],
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "@optum-rx-skyline/components": "^0.5.1",
+    "@testing-library/jest-dom": "^5.16.0",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "@types/jest": "^29.0.0",
+    "@types/react": "^18.0.0"
+  },
+  "peerDependencies": {
+    "@mui/material": "^5.10.0",
+    "@optum-rx-skyline/components": "^0.5.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@mui/icons-material": "^7.3.6"
+  }
+}

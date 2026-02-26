@@ -1,0 +1,13 @@
+node_modules
+coverage
+tmp
+npm-dist
+generators
+migrations
+docs
+cypress
+cdn-dist
+container-dist
+.storybook
+packages/*/node_modules
+surfaces/*/node_modules

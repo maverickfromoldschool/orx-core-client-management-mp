@@ -1,0 +1,64 @@
+{
+  "name": "@optum-rx-core/orx-core-admin-settings-webcomponent",
+  "version": "0.0.0",
+  "description": "Admin Settings Webcomponent",
+  "repository": "",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build",
+    "preversion": "yarn build",
+    "postversion": "npx @optum-rx-platform/cli@latest run-script prepare-package-for-npm --quiet && npx @optum-rx-platform/cli@latest run-script prepare-package-for-cdn --quiet",
+    "dev": "vite",
+    "serve": "vite preview"
+  },
+  "main": "./orx-core-admin-settings.umd.js",
+  "files": [
+    "tsconfig.json",
+    "*.js",
+    "*.js.map",
+    "*.d.ts",
+    "**/*.js",
+    "**/*.js.map",
+    "**/*.d.ts"
+  ],
+  "assets": [
+    "README.md"
+  ],
+  "devDependencies": {
+    "@optum-rx-skyline/components": "^0.5.1",
+    "@vitejs/plugin-react": "^4.4.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "vite": "^6.3.2"
+  },
+  "peerDependencies": {
+    "@mui/material": "^5.10.0",
+    "@optum-rx-skyline/components": "^0.5.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@emotion/cache": "11.10.0",
+    "@emotion/react": "11.10.6",
+    "@mui/material": "^5.10.0",
+    "@mui/system": "^5.10.0",
+    "@optum-rx-core/orx-core-admin-settings": "workspace:*",
+    "@optum-rx-core/orx-core-notification": "workspace:*",
+    "@optum-rx-skyline/components": "^0.2.1",
+    "@optum-rx-skyline/themes": "^0.2.1",
+    "@r2wc/core": "^1.0.0",
+    "@r2wc/react-to-web-component": "2.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "orxCore": {
+    "metadata": {
+      "npmPackageName": "orx-core-admin-settings-webcomponent",
+      "exportName": "orx-core-admin-settings",
+      "cdnPackageName": "orx-core-admin-settings",
+      "runtimeWrapper": true,
+      "entry": "orx-core-admin-settings.umd.js",
+      "packagePath": "orx-core-admin-settings-webcomponent"
+    }
+  }
+}

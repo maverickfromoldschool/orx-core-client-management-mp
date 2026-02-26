@@ -1,0 +1,65 @@
+{
+  "name": "@optum-rx-core/orx-core-file-center",
+  "version": "0.0.0",
+  "description": "",
+  "repository": "",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "preversion": "yarn build",
+    "postversion": "npx @optum-rx-platform/cli@latest run-script prepare-package-for-npm --quiet"
+  },
+  "main": "src/index",
+  "files": [
+    "tsconfig.json",
+    "*.js",
+    "*.js.map",
+    "*.d.ts",
+    "**/*.js",
+    "**/*.js.map",
+    "**/*.d.ts"
+  ],
+  "assets": [
+    "README.md"
+  ],
+  "devDependencies": {
+    "@optum-rx-skyline/components": "^0.5.1",
+    "@testing-library/jest-dom": "^6.0.0"
+  },
+  "peerDependencies": {
+    "@mui/icons-material": "^5.10.0",
+    "@mui/material": "^5.10.0",
+    "@optum-rx-skyline/components": "^0.5.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@mui/icons-material": "^5.10.16",
+    "@mui/x-data-grid": "^8.23.0",
+    "@optum-rx-core/orx-core-client-shared": "workspace:*",
+    "@optum-rx-core/orx-core-notification": "^1.0.1",
+    "axios": "^1.8.2",
+    "tslib": "^2.3.1"
+  },
+  "publishConfig": {
+    "registry": "https://repo1.uhc.com/artifactory/api/npm/npm-local/"
+  },
+  "stableVersion": "0.1.0",
+  "meta": {
+    "generatedBy": "micro-product",
+    "generatedOn": "2026-01-08T08:20:46.809Z",
+    "generatedWith": {
+      "microProductName": "orx-core-file-center",
+      "destinationPackage": "New Package",
+      "npmPackageName": "orx-core-file-center",
+      "npmNamespace": "@optum-rx-core",
+      "version": "0.0.0",
+      "description": "",
+      "repository": "",
+      "folderType": "Default Folder (packages)",
+      "folderName": "",
+      "packagePath": "orx-core-file-center"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+export const GET_LOOKUP = '/api/lookups/search';
+export const CHARGE_TYPE_FIELD = 'CHARGE_TYPE';
+export const PRODUCT_TYPE_FIELD = 'PRODUCT_TYPE';
+
+export const PRODUCT_GROUP_URL = '/admin/v1/productGroup';
+export const ATTRIBUTE_URL = '/attribute';
+export const GET_UOM_URL = '/admin/v1/uom';
+export const ACCOUNTING_CODE_URL = '/admin/v1/accounting-code';
+export const GET_PRODUCTS_URL = '/product/getAllProducts';
+export const GET_PRODUCT_BY_ID_URL = '/product/getProductById';
+export const SAVE_PRODUCT_URL = '/product/addProduct';
+export const UPDATE_PRODUCT_URL = '/product/updateProduct';
+export const ASSIGN_PRODUCT_ATTRIBUTE_URL = '/product-extension/assignProductAttribute';
+export const UPDATE_PRODUCT_ATTRIBUTE_URL = '/product-extension/updateProductAttribute';
+export const DELETE_PRODUCT_ATTRIBUTE_URL = '/product-extension/deleteProductAttribeByProductExtId';
+export const GET_TRANSACTION_FIELDS_URL = '/product-txn-label';
+export const CREATE_TRANSACTION_FIELD_URL = '/product-txn-label';
+export const UPDATE_TRANSACTION_FIELD_URL = '/product-txn-label';
+export const DELETE_TRANSACTION_FIELD_URL = '/product-txn-label';

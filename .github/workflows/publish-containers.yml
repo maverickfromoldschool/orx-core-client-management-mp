@@ -1,0 +1,47 @@
+name: Publish Containers
+
+on:
+  workflow_run:
+    workflows: [Prerelease, Release Minor, Release Major, Release Minor & Major, Hotfix]
+    types: [completed]
+
+jobs:
+  publish_containers:
+    runs-on: uhg-runner
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          skip_gh_install: true
+
+      - name: Download artifacts
+        continue-on-error: true
+        run: gh run download ${{ github.event.workflow_run.id }} -n container-dist-files -D container-dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for Container artifacts
+        id: container_artifacts
+        run: |
+          [ -d "./container-dist" ] && echo "exist=true" >> $GITHUB_OUTPUT || echo "exist=false" >> $GITHUB_OUTPUT
+
+      - name: Login to Docker Container Registry
+        if: steps.container_artifacts.outputs.exist == 'true'
+        run: |
+          docker login -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} -p ${{ secrets.DOCKER_REGISTRY_PASSWORD }} ${{ secrets.DOCKER_REGISTRY_URL }}
+
+      - name: Publish Containers to Registry
+        if: steps.container_artifacts.outputs.exist == 'true'
+        run: |
+          echo "Publishing Containers to Registry"
+          npx @optum-rx-platform/cli@latest run-script publish-containers --quiet --registry-url ${{ secrets.DOCKER_REGISTRY_URL }}
+    
+      - name: Archive Logs artifacts
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: logs-files
+          path: logs

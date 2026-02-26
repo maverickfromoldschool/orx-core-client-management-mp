@@ -1,0 +1,17 @@
+{
+  "extends": "./node_modules/@uhg-skyline/typescript/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "module": "CommonJS",
+    "target": "ES5",
+    "declaration": true,
+    "noEmit": false,
+    "jsx": "react",
+    "sourceMap": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "exclude": ["node_modules", "packages/**/node_modules", "types", "tmp"],
+  "include": ["**/*.ts", "**/*.tsx"]
+}

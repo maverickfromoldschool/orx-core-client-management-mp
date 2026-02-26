@@ -1,0 +1,46 @@
+name: Publish NPM Packages
+
+on:
+  workflow_run:
+    workflows: [Prerelease, Release Minor, Release Major, Release Minor & Major, Hotfix]
+    types: [completed]
+
+jobs:
+  publish_npm:
+    runs-on: uhg-runner
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          skip_gh_install: true
+
+      - name: Download artifacts
+        continue-on-error: true
+        run: gh run download ${{ github.event.workflow_run.id }} -n npm-dist-files -D npm-dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for artifacts
+        id: npm_artifacts
+        run: |
+          [ -d "./npm-dist" ] && echo "exist=true" >> $GITHUB_OUTPUT || echo "exist=false" >> $GITHUB_OUTPUT
+
+      - name: Set Artifactory Token
+        if: steps.npm_artifacts.outputs.exist == 'true'
+        run: printf "//repo1.uhc.com/artifactory/api/npm/npm-local/:_authToken=${{ secrets.ARTIFACTORY_NPM_AUTH_TOKEN }}\n//repo1.uhc.com/artifactory/api/npm/npm-local/:always-auth=true" > .npmrc
+
+      - name: Publish Packages to Artifactory
+        if: steps.npm_artifacts.outputs.exist == 'true'
+        run: |
+          echo "Publishing NPM artifacts"
+          npx @optum-rx-platform/cli@latest run-script publish-npm-packages --quiet
+
+      - name: Archive Logs artifacts
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: logs-files
+          path: logs

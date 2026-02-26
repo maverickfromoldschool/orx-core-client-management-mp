@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "packages": ["packages/**/*", "surfaces/**/*"],
+  "version": "independent",
+  "npmClient": "yarn",
+  "command": {
+    "run": {
+      "ignore": [
+        "@optum-rx-core/orx-core-notification",
+        "@optum-rx-core/orx-core-client-shared",
+        "@optum-rx-core/orx-core-axios"
+      ]
+    },
+    "publish": {
+      "ignore": [
+        "@optum-rx-core/orx-core-notification",
+        "@optum-rx-core/orx-core-client-shared",
+        "@optum-rx-core/orx-core-axios"
+      ],
+      "ignoreChanges": ["*.md", "*.test.ts", "*.test.tsx", "*.story.tsx", "*.stories.tsx"],
+      "directory": "{workspaceRoot}/dist/{projectRoot}",
+      "assets": ["README.md", "package.json"]
+    }
+  }
+}

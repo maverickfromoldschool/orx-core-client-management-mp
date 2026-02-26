@@ -1,0 +1,37 @@
+name: Generate From JSON
+
+on:
+  workflow_dispatch:
+    inputs:
+      json_data:
+        description: JSON data to generate files from
+        required: true
+
+jobs:
+  release_minor:
+    name: Generate Files
+    runs-on: uhg-runner
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          # If you have a protected main branch then add this value as a secret and uncomment
+          # token: ${{ secrets.GH_PUSH_TO_PROTECTED_BRANCH_PAT }}
+          skip_gh_install: true
+
+      - name: Configure Git
+        uses: ./.github/actions/configure-git-identity
+        with:
+          workflow_name: generate-from-json
+
+      - name: Run Generators
+        run: |
+          npx @optum-rx-platform/cli@latest generate json '${{ inputs.json_data }}' --quiet
+
+      - name: Commit Generated Files
+        run: |
+          git add .
+          git commit -m "Add generated files from JSON"
+          git push origin main --no-verify

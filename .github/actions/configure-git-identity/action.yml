@@ -1,0 +1,15 @@
+name: Configure Git Identity
+
+inputs:
+  workflow_name:
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure name and email address
+      run: |
+        git config user.email "${{ inputs.workflow_name }}@github-actions.noreply.optum.com"
+        git config user.name "${{ inputs.workflow_name }}-workflow"
+      shell: bash

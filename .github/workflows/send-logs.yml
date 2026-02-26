@@ -1,0 +1,35 @@
+name: Send Logs
+
+on:
+  workflow_run:
+    workflows: [Prerelease, Release Minor, Release Major, Hotfix]
+    types: [completed]
+
+jobs:
+  publish_containers:
+    runs-on: uhg-runner
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          skip_gh_install: true
+
+      - name: Download artifacts
+        continue-on-error: true
+        run: gh run download ${{ github.event.workflow_run.id }} -n logs-files -D logs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for Build Log artifacts
+        id: build_log_artifacts
+        run: |
+          [ -d "./logs/build.log" ] && echo "exist=true" >> $GITHUB_OUTPUT || echo "exist=false" >> $GITHUB_OUTPUT
+
+      - name: Send Build Log
+        if: steps.build_log_artifacts.outputs.exist == 'true'
+        run: |
+          echo "Sending Build Log"
+          npx @optum-rx-platform/cli@latest run-script send-logs --quiet --api-url=http://localhost:3000/api/v1/build-logs

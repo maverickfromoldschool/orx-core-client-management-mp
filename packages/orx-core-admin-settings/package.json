@@ -1,0 +1,67 @@
+{
+  "name": "@optum-rx-core/orx-core-admin-settings",
+  "version": "0.0.0",
+  "description": "",
+  "repository": "",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "preversion": "yarn build",
+    "postversion": "npx @optum-rx-platform/cli@latest run-script prepare-package-for-npm --quiet"
+  },
+  "main": "src/index",
+  "files": [
+    "tsconfig.json",
+    "*.js",
+    "*.js.map",
+    "*.d.ts",
+    "**/*.js",
+    "**/*.js.map",
+    "**/*.d.ts"
+  ],
+  "assets": [
+    "README.md"
+  ],
+  "devDependencies": {
+    "@optum-rx-skyline/components": "^0.5.1",
+    "@testing-library/react": "^14.0.0"
+  },
+  "peerDependencies": {
+    "@mui/material": "^5.10.0",
+    "@optum-rx-skyline/components": "^0.5.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@mui/icons-material": "^7.3.6",
+    "@mui/x-date-pickers": "^8.27.0",
+    "@optum-rx-core/orx-core-axios": "workspace:*",
+    "@optum-rx-core/orx-core-client-shared": "workspace:*",
+    "@optum-rx-core/orx-core-notification": "workspace:*",
+    "axios": "^1.13.4",
+    "date-fns": "4.1.0",
+    "react-hook-form": "^7.49.0",
+    "react-router-dom": "^6.28.0",
+    "zod": "^3.24.1"
+  },
+  "publishConfig": {
+    "registry": "https://repo1.uhc.com/artifactory/api/npm/npm-local/"
+  },
+  "stableVersion": "0.1.0",
+  "meta": {
+    "generatedBy": "package",
+    "generatedOn": "2026-01-23T10:21:07.389Z",
+    "generatedWith": {
+      "destinationPackage": "New Package",
+      "npmNamespace": "@optum-rx-core",
+      "npmPackageName": "orx-core-admin-settings",
+      "version": "0.0.0",
+      "description": "",
+      "repository": "",
+      "folderType": "Default Folder (packages)",
+      "folderName": "",
+      "packagePath": "orx-core-admin-settings"
+    }
+  }
+}

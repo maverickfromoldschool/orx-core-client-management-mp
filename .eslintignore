@@ -1,0 +1,84 @@
+#VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+lerna-debug.log*
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Dependency directories
+node_modules/
+
+#report
+.scannerwork/
+.history/
+.idea
+reports/
+lhci-data/
+
+# misc
+.DS_Store
+
+# Build Output
+build/
+dist/
+cdn-dist/
+npm-dist/
+container-dist/
+functions-dist/
+tmp/
+.jest-test-results.json
+storybook-static/
+gh-build/
+.nyc_output/
+
+# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+.yarn/*
+!.yarn/cache
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+.yalc/
+yalc.lock
+
+documentation
+generators
+migrations
+tools
+.next/
+static/mockServiceWorker.js
+
+packages/**/*.jsx
+packages/**/*.js.map
+packages/**/*.jsx.map
+packages/**/*.d.ts
+packages/**/*.js
+.scannerwork/
+.history
+
+#cypress
+cypress/support
+cypress/cucumber-json
+cypress/videos
+cypress/screenshots
+cypress/fixtures
+cypress.config.ts
+
+# Functions
+packages/**/.vscode/*
+packages/**/**/*.json
+packages/**/**/*.dat
+packages/**/*.json

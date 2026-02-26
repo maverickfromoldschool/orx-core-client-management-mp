@@ -1,0 +1,1 @@
+## @optum-rx-core/orx-core-admin-settings

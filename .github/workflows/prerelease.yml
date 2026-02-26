@@ -1,0 +1,61 @@
+name: Prerelease
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  publish_prerelease:
+    name: Prerelease
+    runs-on: uhg-runner
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          # Need to fetch entire repo history to do proper versioning
+          fetch_depth: 0
+          # If you have a protected main branch then add this value as a secret and uncomment
+          # token: ${{ secrets.GH_PUSH_TO_PROTECTED_BRANCH_PAT }}
+          skip_gh_install: true
+
+      - name: Configure Git
+        uses: ./.github/actions/configure-git-identity
+        with:
+          workflow_name: publish-prerelease-versions
+
+      - name: Bump Version Numbers
+        run: |
+          echo "Bumping changed package version numbers and pushing to remote"
+          npx @optum-rx-platform/cli@latest run-script prerelease --quiet
+
+      - name: Archive CDN artifacts
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: cdn-dist-files
+          path: cdn-dist
+
+      - name: Archive NPM artifacts
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: npm-dist-files
+          path: npm-dist
+
+      - name: Archive Container artifacts
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: container-dist-files
+          path: container-dist
+
+      - name: Archive Logs artifacts
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: logs-files
+          path: logs

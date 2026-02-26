@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+metadata: 
+  askId: AIDE_XXXXXXXX
+  caAgileId: poc
+  projectKey: com.optum.platform.micro-product-template
+  projectFriendlyName: optum-rx-innovation-micro-product-template
+  componentType: code
+  targetQG: GATE_00

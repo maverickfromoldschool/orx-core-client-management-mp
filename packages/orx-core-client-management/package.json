@@ -1,0 +1,73 @@
+{
+  "name": "@optum-rx-core/orx-core-client-management",
+  "version": "0.0.0",
+  "description": "",
+  "repository": "",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "preversion": "yarn build",
+    "postversion": "npx @optum-rx-platform/cli@latest run-script prepare-package-for-npm --quiet"
+  },
+  "main": "src/index",
+  "files": [
+    "tsconfig.json",
+    "*.js",
+    "*.js.map",
+    "*.d.ts",
+    "**/*.js",
+    "**/*.js.map",
+    "**/*.d.ts"
+  ],
+  "assets": [
+    "README.md"
+  ],
+  "devDependencies": {
+    "@optum-rx-skyline/components": "^0.5.1"
+  },
+  "peerDependencies": {
+    "@mui/material": "^5.10.0",
+    "@optum-rx-skyline/components": "^0.5.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "3.3.0",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/x-date-pickers": "^5.0.20",
+    "@optum-rx-core/orx-core-client-shared": "workspace:*",
+    "@optum-rx-core/orx-core-notification": "workspace:*",
+    "@testing-library/react": "^16.3.1",
+    "axios": "^1.6.0",
+    "dayjs": "^1.11.10",
+    "react-country-state-city": "^1.1.12",
+    "react-hook-form": "^7.49.0",
+    "react-router-dom": "^6.28.0",
+    "tslib": "^2.3.1",
+    "zod": "^3.24.1"
+  },
+  "publishConfig": {
+    "registry": "https://repo1.uhc.com/artifactory/api/npm/npm-local/"
+  },
+  "stableVersion": "0.1.0",
+  "meta": {
+    "generatedBy": "micro-product",
+    "generatedOn": "2025-12-22T09:31:48.618Z",
+    "generatedWith": {
+      "microProductName": "orx-core-client-management",
+      "confirmation": true,
+      "packageManager": "yarn",
+      "yarnDownloadConfirmation": false,
+      "destinationPackage": "New Package",
+      "npmPackageName": "orx-core-client-management",
+      "npmNamespace": "@optum-rx-core",
+      "version": "0.0.0",
+      "description": "",
+      "repository": "",
+      "folderType": "Default Folder (packages)",
+      "folderName": "",
+      "packagePath": "orx-core-client-management"
+    }
+  }
+}
