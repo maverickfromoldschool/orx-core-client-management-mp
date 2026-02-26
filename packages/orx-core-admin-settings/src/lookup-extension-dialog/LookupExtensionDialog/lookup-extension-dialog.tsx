@@ -17,7 +17,6 @@ import {
   Typography,
   Button,
   TextField,
-  InputAdornment,
   Checkbox,
   Switch,
   Tabs,
@@ -153,9 +152,9 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
   const [extensionId, setExtensionId] = React.useState('');
   const [displayName, setDisplayName] = React.useState('');
   const [lookupCode, setLookupCode] = React.useState('');
-  const [systemDefined, setSystemDefined] = React.useState(true);
-  const [userMapping, setUserMapping] = React.useState(true);
-  const [multipleOccurrences, setMultipleOccurrences] = React.useState(false);
+  const [systemDefined, setSystemDefined] = React.useState(false); // Requirement 6: Initial state OFF
+  const [userMapping, setUserMapping] = React.useState(false);
+  const [multipleOccurrences, setMultipleOccurrences] = React.useState(false); // Requirement 6: Initial state OFF
 
   // start empty when creating a new extension (no data passed in yet)
   const [fields, setFields] = React.useState<FieldRow[]>([]);
@@ -389,9 +388,9 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
     setExtensionId('');
     setDisplayName('');
     setLookupCode('');
-    setSystemDefined(true);
-    setUserMapping(true);
-    setMultipleOccurrences(false);
+    setSystemDefined(false); // Requirement 6: Reset to OFF
+    setUserMapping(false);
+    setMultipleOccurrences(false); // Requirement 6: Reset to OFF
     setFields([]);
     setEntries([]);
     setNextFieldIndex(1);
@@ -400,6 +399,15 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
     setTempFields({});
     setEditingEntryIds([]);
     setTempEntries({});
+    // Requirement 4: Clear all error messages
+    setExtensionIdError('');
+    setDisplayNameError('');
+    setLookupCodeError('');
+    setFieldElementErrors({});
+    setFieldDisplayNameErrors({});
+    setFieldLookupCodeErrors({});
+    setEntryLookupValueErrors({});
+    setSaveError(null);
   };
 
   // When the dialog is explicitly closed via handleClose, reset state.
@@ -896,7 +904,7 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
     >
       <DialogTitle sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
         <Typography sx={{color: '#002677', fontWeight: 700, fontSize: '29px', lineHeight: '36px'}}>
-          Add New Lookup Extension
+          Add Lookup Extension
         </Typography>
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
@@ -907,45 +915,47 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
           <Grid item xs={4}>
             <Box sx={{display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5}}>
               <Typography component="label" sx={{fontSize: '16px', fontWeight: 700, color: 'text.primary'}}>
-                Extension (Identifier)
+                Extension Code
                 <Typography component="span" sx={{color: '#C40000', ml: 0.5}}>
                   *
                 </Typography>
               </Typography>
 
-              <Tooltip title="The display name is the label shown to the user." arrow placement="right">
+              <Tooltip title="The extension code is a unique identifier for this extension." arrow placement="right">
                 <HelpOutlineIcon sx={{fontSize: '16px', color: '#0066F5', cursor: 'pointer'}} />
               </Tooltip>
             </Box>
 
             <TextField
-              label="Extension (identifier)"
               fullWidth
               value={extensionId}
               onChange={(e) => {
-                setExtensionId(e.target.value);
+                // Requirement 7: Max length 30
+                const newValue = e.target.value.slice(0, 30);
+                setExtensionId(newValue);
                 // Clear error when user types
-                if (e.target.value?.trim()) {
+                if (newValue?.trim()) {
                   setExtensionIdError('');
                 }
               }}
               onBlur={() => {
                 if (!extensionId?.trim()) {
-                  setExtensionIdError('Extension (identifier) is required');
+                  setExtensionIdError('Extension code is required');
                 }
               }}
               disabled={!!props.initialData}
               error={!!extensionIdError}
-              helperText={extensionIdError || ' '}
+              helperText={extensionIdError || `${extensionId.length}/30 characters`}
               FormHelperTextProps={{
                 sx: {minHeight: '20px', margin: '3px 14px 0'}
               }}
+              inputProps={{maxLength: 30}} // Requirement 7
             />
           </Grid>
           <Grid item xs={4}>
             <Box sx={{display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5}}>
               <Typography component="label" sx={{fontSize: '16px', fontWeight: 700, color: 'text.primary'}}>
-                Display Name
+                Name
                 <Typography component="span" sx={{color: '#C40000', ml: 0.5}}>
                   *
                 </Typography>
@@ -961,9 +971,11 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
               fullWidth
               value={displayName}
               onChange={(e) => {
-                setDisplayName(e.target.value);
+                // Requirement 7: Max length 50
+                const newValue = e.target.value.slice(0, 50);
+                setDisplayName(newValue);
                 // Clear error when user types
-                if (e.target.value?.trim()) {
+                if (newValue?.trim()) {
                   setDisplayNameError('');
                 }
               }}
@@ -973,10 +985,11 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
                 }
               }}
               error={!!displayNameError}
-              helperText={displayNameError || ' '}
+              helperText={displayNameError || `${displayName.length}/50 characters`}
               FormHelperTextProps={{
                 sx: {minHeight: '20px', margin: '3px 14px 0'}
               }}
+              inputProps={{maxLength: 50}} // Requirement 7
             />
           </Grid>
           <Grid item xs={4}>
@@ -1033,7 +1046,7 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
                 }}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
                 freeSolo
-                disabled={props.lookupsLoading || entries.filter((e) => !e.draft).length > 0}
+                disabled={props.lookupsLoading || entries.filter((e) => !e.draft).length > 0 || !!props.initialData} // Requirement 2: Not editable when editing existing extension
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -1075,6 +1088,7 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
           </Grid>
           <Grid item xs={12}>
             <Box sx={{display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'center'}}>
+              {/* Requirement 6: System Defined switch */}
               <Box sx={{display: 'flex', alignItems: 'center', gap: 1, minWidth: 220}}>
                 <Typography sx={{fontWeight: 500, fontSize: '16px'}}>System Defined</Typography>
                 <Switch
@@ -1138,83 +1152,92 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
                   }}
                   checked={systemDefined}
                   onChange={() => {
-                    setSystemDefined((v) => !v);
+                    const newValue = !systemDefined;
+                    setSystemDefined(newValue);
+                    // Requirement 6: Reset User Mapping when System Defined is turned off
+                    if (!newValue) {
+                      setUserMapping(false);
+                    }
                   }}
                 />
                 <Typography sx={{fontWeight: 400, fontSize: '16px', color: '#323334'}}>
                   {systemDefined ? 'Yes' : 'No'}
                 </Typography>
               </Box>
-              <Box sx={{display: 'flex', alignItems: 'center', gap: 1, minWidth: 220}}>
-                <Typography sx={{fontWeight: 500, fontSize: '16px'}}>User Mapping</Typography>
-                <Switch
-                  sx={{
-                    width: 36,
-                    height: 20,
-                    padding: 0,
-                    '& .MuiSwitch-switchBase': {
+              {/* Requirement 6: User Mapping only visible when System Defined is ON */}
+              {systemDefined && (
+                <Box sx={{display: 'flex', alignItems: 'center', gap: 1, minWidth: 220}}>
+                  <Typography sx={{fontWeight: 500, fontSize: '16px'}}>User Mapping</Typography>
+                  <Switch
+                    sx={{
+                      width: 36,
+                      height: 20,
                       padding: 0,
-                      margin: 0,
-                      transitionDuration: '300ms',
-                      '&.Mui-checked': {
-                        transform: 'translateX(16px)',
-                        '& + .MuiSwitch-track': {
-                          backgroundColor: '#FFFFFF',
-                          opacity: 1,
-                          border: '2px solid #0C55B8'
+                      '& .MuiSwitch-switchBase': {
+                        padding: 0,
+                        margin: 0,
+                        transitionDuration: '300ms',
+                        '&.Mui-checked': {
+                          transform: 'translateX(16px)',
+                          '& + .MuiSwitch-track': {
+                            backgroundColor: '#FFFFFF',
+                            opacity: 1,
+                            border: '2px solid #0C55B8'
+                          },
+                          '& .MuiSwitch-thumb': {
+                            backgroundColor: '#0C55B8',
+                            '&:before': {
+                              content: '""',
+                              position: 'absolute',
+                              width: '100%',
+                              height: '100%',
+                              backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path d="M8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z"/></svg>')`,
+                              backgroundRepeat: 'no-repeat',
+                              backgroundPosition: 'center',
+                              backgroundSize: '10px 10px'
+                            }
+                          }
                         },
-                        '& .MuiSwitch-thumb': {
-                          backgroundColor: '#0C55B8',
-                          '&:before': {
-                            content: '""',
-                            position: 'absolute',
-                            width: '100%',
-                            height: '100%',
-                            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path d="M8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z"/></svg>')`,
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'center',
-                            backgroundSize: '10px 10px'
+                        '&.Mui-disabled': {
+                          '& .MuiSwitch-thumb': {
+                            backgroundColor: '#B1B2B4'
+                          },
+                          '&.Mui-checked .MuiSwitch-thumb': {
+                            backgroundColor: '#B1B2B4'
+                          },
+                          '& + .MuiSwitch-track': {
+                            opacity: 1,
+                            border: '2px solid #B1B2B4',
+                            backgroundColor: '#FFFFFF'
                           }
                         }
                       },
-                      '&.Mui-disabled': {
-                        '& .MuiSwitch-thumb': {
-                          backgroundColor: '#B1B2B4'
-                        },
-                        '&.Mui-checked .MuiSwitch-thumb': {
-                          backgroundColor: '#B1B2B4'
-                        },
-                        '& + .MuiSwitch-track': {
-                          opacity: 1,
-                          border: '2px solid #B1B2B4',
-                          backgroundColor: '#FFFFFF'
-                        }
+                      '& .MuiSwitch-thumb': {
+                        width: 20,
+                        height: 20,
+                        backgroundColor: '#757575',
+                        boxShadow: 'none'
+                      },
+                      '& .MuiSwitch-track': {
+                        borderRadius: 10,
+                        border: '2px solid #757575',
+                        backgroundColor: '#FFFFFF',
+                        opacity: 1,
+                        transition: 'background-color 300ms, border-color 300ms',
+                        boxSizing: 'border-box'
                       }
-                    },
-                    '& .MuiSwitch-thumb': {
-                      width: 20,
-                      height: 20,
-                      backgroundColor: '#757575',
-                      boxShadow: 'none'
-                    },
-                    '& .MuiSwitch-track': {
-                      borderRadius: 10,
-                      border: '2px solid #757575',
-                      backgroundColor: '#FFFFFF',
-                      opacity: 1,
-                      transition: 'background-color 300ms, border-color 300ms',
-                      boxSizing: 'border-box'
-                    }
-                  }}
-                  checked={userMapping}
-                  onChange={() => {
-                    setUserMapping((v) => !v);
-                  }}
-                />
-                <Typography sx={{fontWeight: 400, fontSize: '16px', color: '#323334'}}>
-                  {userMapping ? 'Yes' : 'No'}
-                </Typography>
-              </Box>
+                    }}
+                    checked={userMapping}
+                    onChange={() => {
+                      setUserMapping((v) => !v);
+                    }}
+                  />
+                  <Typography sx={{fontWeight: 400, fontSize: '16px', color: '#323334'}}>
+                    {userMapping ? 'Yes' : 'No'}
+                  </Typography>
+                </Box>
+              )}
+              {/* Requirement 6: Multiple Occurrences switch */}
               <Box sx={{display: 'flex', alignItems: 'center', gap: 1, minWidth: 220}}>
                 <Typography sx={{fontWeight: 500, fontSize: '16px'}}>Multiple Occurrences</Typography>
                 <Switch
@@ -1307,12 +1330,14 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
           />
           <Tab
             label="Entries"
+            disabled={!lookupCode?.trim() || fields.filter((f) => !f.draft).length === 0} // Requirement 3: Disabled when no lookup code or no saved fields
             sx={{
               textTransform: 'none',
               fontWeight: 700,
               fontSize: '18px',
               color: '#0C55B8',
-              '&.Mui-selected': {color: '#002677'}
+              '&.Mui-selected': {color: '#002677'},
+              '&.Mui-disabled': {color: '#B1B2B4', opacity: 0.6}
             }}
           />
         </Tabs>
@@ -1326,42 +1351,28 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
                   {fields.length}
                 </Typography>
               </Typography>
-              <Box sx={{display: 'flex', gap: 1, alignItems: 'center'}}>
-                <TextField
-                  size="small"
-                  placeholder="Search for fields"
-                  sx={{'& .MuiOutlinedInput-root': {borderRadius: '44px'}, width: '350px'}}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon sx={{color: '#0C55B8'}} />
-                      </InputAdornment>
-                    )
-                  }}
-                />
-                <Button
-                  sx={{
-                    borderRadius: '46px',
-                    backgroundColor: '#002677',
-                    color: '#FBF9F4',
-                    fontWeight: 700,
-                    fontSize: '16px'
-                  }}
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  onClick={addField}
-                  disabled={entries.length > 0}
-                >
-                  Add Field
-                </Button>
-              </Box>
+              <Button
+                sx={{
+                  borderRadius: '46px',
+                  backgroundColor: '#002677',
+                  color: '#FBF9F4',
+                  fontWeight: 700,
+                  fontSize: '16px'
+                }}
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={addField}
+                disabled={entries.length > 0}
+              >
+                Add Field
+              </Button>
             </Box>
 
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{fontSize: '14px', fontWeight: 700}}>
-                    Display Name&nbsp;
+                    Field Name&nbsp;
                     <Typography component="span" sx={{color: '#D32F2F'}}>
                       *
                     </Typography>
@@ -1573,35 +1584,21 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
                   {entries.length}
                 </Typography>
               </Typography>
-              <Box sx={{display: 'flex', gap: 1, alignItems: 'center'}}>
-                <TextField
-                  size="small"
-                  placeholder="Search for values"
-                  sx={{'& .MuiOutlinedInput-root': {borderRadius: '44px'}, width: '350px'}}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon sx={{color: '#0C55B8'}} />
-                      </InputAdornment>
-                    )
-                  }}
-                />
-                <Button
-                  sx={{
-                    borderRadius: '46px',
-                    backgroundColor: '#002677',
-                    color: '#FBF9F4',
-                    fontWeight: 700,
-                    fontSize: '16px'
-                  }}
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  onClick={addEntry}
-                  disabled={fields.length === 0 || !lookupCode}
-                >
-                  Add Entry
-                </Button>
-              </Box>
+              <Button
+                sx={{
+                  borderRadius: '46px',
+                  backgroundColor: '#002677',
+                  color: '#FBF9F4',
+                  fontWeight: 700,
+                  fontSize: '16px'
+                }}
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={addEntry}
+                disabled={fields.length === 0 || !lookupCode}
+              >
+                Add Entry
+              </Button>
             </Box>
 
             <Table>
@@ -2029,45 +2026,44 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
         )}
       </DialogContent>
       <DialogActions
-        sx={{p: 2, justifyContent: 'flex-start', gap: 1, flexDirection: 'column', alignItems: 'flex-start'}}
+        sx={{p: 2, justifyContent: 'flex-end', gap: 1}}
       >
-        {saveError && <Typography sx={{color: '#D32F2F', fontSize: '14px', width: '100%'}}>{saveError}</Typography>}
-        <Box sx={{display: 'flex', gap: 1}}>
-          <Button
-            sx={{backgroundColor: '#002677', fontSize: '16px', fontWeight: 700, color: '#FBF9F4', borderRadius: '46px'}}
-            variant="contained"
-            onClick={handleSave}
-            disabled={
-              saving ||
-              !extensionId?.trim() ||
-              !displayName?.trim() ||
-              !lookupCode?.trim() ||
-              !!extensionIdError ||
-              !!displayNameError ||
-              !!lookupCodeError ||
-              Object.keys(fieldElementErrors).length > 0 ||
-              Object.keys(fieldDisplayNameErrors).length > 0 ||
-              Object.keys(fieldLookupCodeErrors).length > 0 ||
-              Object.keys(entryLookupValueErrors).length > 0
-            }
-            startIcon={saving ? <CircularProgress size={20} sx={{color: '#FBF9F4'}} /> : null}
-          >
-            {saving ? 'Saving...' : 'Save'}
-          </Button>
-          <Button
-            sx={{
-              fontSize: '16px',
-              fontWeight: 700,
-              color: '#323334',
-              borderRadius: '46px',
-              border: '1px solid #323334'
-            }}
-            onClick={handleClose}
-            disabled={saving}
-          >
-            Cancel
-          </Button>
-        </Box>
+        {saveError && <Typography sx={{color: '#D32F2F', fontSize: '14px', mr: 'auto'}}>{saveError}</Typography>}
+        <Button
+          sx={{
+            fontSize: '16px',
+            fontWeight: 700,
+            color: '#323334',
+            borderRadius: '46px',
+            border: '1px solid #323334'
+          }}
+          onClick={handleClose}
+          disabled={saving}
+        >
+          Cancel
+        </Button>
+        <Button
+          sx={{backgroundColor: '#002677', fontSize: '16px', fontWeight: 700, color: '#FBF9F4', borderRadius: '46px'}}
+          variant="contained"
+          onClick={handleSave}
+          disabled={
+            saving ||
+            !extensionId?.trim() ||
+            !displayName?.trim() ||
+            !lookupCode?.trim() ||
+            !!extensionIdError ||
+            !!displayNameError ||
+            !!lookupCodeError ||
+            Object.keys(fieldElementErrors).length > 0 ||
+            Object.keys(fieldDisplayNameErrors).length > 0 ||
+            Object.keys(fieldLookupCodeErrors).length > 0 ||
+            Object.keys(entryLookupValueErrors).length > 0 ||
+            fields.filter((f) => !f.draft).length === 0 // Requirement 5: Disable if no saved fields
+          }
+          startIcon={saving ? <CircularProgress size={20} sx={{color: '#FBF9F4'}} /> : null}
+        >
+          {saving ? 'Saving...' : 'Save'}
+        </Button>
       </DialogActions>
 
       {/* JSON Config Editor Dialog */}

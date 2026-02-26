@@ -6,7 +6,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Checkbox,
   IconButton,
   Box,
   Skeleton,
@@ -57,24 +56,22 @@ export interface LookupExtensionTableProps {
 }
 
 const columns = [
-  {id: 'checkbox', label: '', width: 48},
   {id: 'actions', label: 'Actions', width: 100},
   {
-    id: 'lookupField',
-    label: 'Lookup field (identifier)',
+    id: 'objectCode',
+    label: 'Extension Code',
     width: 250,
     tooltip: 'This is a system identifier which is hidden from end users and cannot be altered once created.'
   },
-  {id: 'displayName', label: 'Display Name', width: 250},
+  {id: 'displayName', label: 'Name', width: 250},
+  {id: 'lookupField', label: 'Lookup Field', width: 200},
   {
     id: 'managedBy',
     label: 'Managed By',
     width: 180,
     tooltip:
       "System-managed fields can't be deleted with limited editing capabilities, while user-managed fields are more flexible."
-  },
-  {id: 'fieldsCount', label: 'Fields', width: 120},
-  {id: 'entriesCount', label: 'Entries', width: 120}
+  }
 ];
 
 const LookupExtensionTable: React.FC<LookupExtensionTableProps> = ({
@@ -88,29 +85,11 @@ const LookupExtensionTable: React.FC<LookupExtensionTableProps> = ({
   onSelectionChange,
   columns: columnsProp
 }) => {
-  const [internalSelectedIds, setInternalSelectedIds] = React.useState<string[]>([]);
-
   // The table no longer performs local filtering; the page/hook/service layer
   // is responsible for delivering the correct page and filtered data.
   const rows = data;
 
   const cols = columnsProp ?? columns;
-
-  const selectedIds = selectedIdsProp ?? internalSelectedIds;
-  const isAllSelected = rows.length > 0 && selectedIds.length === rows.length;
-  const isIndeterminate = selectedIds.length > 0 && selectedIds.length < rows.length;
-
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const ids = event.target.checked ? rows.map((r) => r.objectCode) : [];
-    if (typeof onSelectionChange === 'function') onSelectionChange(ids);
-    else setInternalSelectedIds(ids);
-  };
-
-  const handleSelectOne = (id: string) => {
-    const next = selectedIds.includes(id) ? selectedIds.filter((p) => p !== id) : [...selectedIds, id];
-    if (typeof onSelectionChange === 'function') onSelectionChange(next);
-    else setInternalSelectedIds(next);
-  };
 
   // loading skeleton
   if (isLoading) {
@@ -156,20 +135,6 @@ const LookupExtensionTable: React.FC<LookupExtensionTableProps> = ({
       <Table>
         <TableHead>
           <TableRow>
-            {/* Checkbox header */}
-            <TableCell padding="checkbox" sx={{width: cols[0]?.width, borderBottom: '1px solid #CBCCCD'}}>
-              <Checkbox
-                checked={isAllSelected}
-                indeterminate={isIndeterminate}
-                onChange={handleSelectAll}
-                sx={{
-                  color: '#002677',
-                  '&.Mui-checked': {color: '#002677'},
-                  '&.MuiCheckbox-indeterminate': {color: '#002677'}
-                }}
-              />
-            </TableCell>
-
             {/* Actions header */}
             <TableCell
               sx={{
@@ -177,13 +142,13 @@ const LookupExtensionTable: React.FC<LookupExtensionTableProps> = ({
                 fontSize: '14px',
                 color: '#323334',
                 borderBottom: '1px solid #CBCCCD',
-                width: cols[1]?.width
+                width: cols[0]?.width
               }}
             >
-              {cols[1]?.label}
+              {cols[0]?.label}
             </TableCell>
 
-            {cols.slice(2).map((column) => (
+            {cols.slice(1).map((column) => (
               <TableCell
                 key={column.id}
                 sx={{
@@ -196,7 +161,7 @@ const LookupExtensionTable: React.FC<LookupExtensionTableProps> = ({
               >
                 <Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}>
                   {column.label}
-                  {(column.id === 'objectCode' || column.id === 'managedBy') && (
+                  {column.tooltip && (
                     <Tooltip title={String(column.tooltip)} arrow>
                       <HelpOutlineIcon sx={{fontSize: '16px', color: '#0066F5', cursor: 'pointer'}} />
                     </Tooltip>
@@ -220,29 +185,15 @@ const LookupExtensionTable: React.FC<LookupExtensionTableProps> = ({
             </TableRow>
           ) : (
             rows.map((item) => {
-              const isSelected = selectedIds.includes(item.objectCode);
               return (
                 <TableRow
                   key={item.objectCode}
                   hover
-                  selected={isSelected}
                   sx={{
                     cursor: 'pointer',
-                    '&:hover': {backgroundColor: '#F5F5F5'},
-                    '&.Mui-selected': {backgroundColor: '#E3F2FD', '&:hover': {backgroundColor: '#BBDEFB'}}
+                    '&:hover': {backgroundColor: '#F5F5F5'}
                   }}
                 >
-                  <TableCell
-                    padding="checkbox"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectOne(item.objectCode);
-                    }}
-                    sx={{borderBottom: '1px solid #CBCCCD'}}
-                  >
-                    <Checkbox checked={isSelected} sx={{color: '#002677', '&.Mui-checked': {color: '#002677'}}} />
-                  </TableCell>
-
                   <TableCell sx={{borderBottom: '1px solid #CBCCCD'}}>
                     <Box sx={{display: 'flex', gap: 0.5}}>
                       <Tooltip title="Delete" arrow>
