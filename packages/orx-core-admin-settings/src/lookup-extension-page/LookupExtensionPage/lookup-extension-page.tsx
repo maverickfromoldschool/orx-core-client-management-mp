@@ -121,10 +121,9 @@ export function LookupExtensionPage(props: LookupExtensionPageProps) {
   // };
 
   const columns: TableColumn[] = [
-    {id: 'checkbox', label: '', width: 48},
     {id: 'actions', label: 'Actions', width: 100},
-    {id: 'objectCode', label: 'Extension (Identifier)', width: 250},
-    {id: 'name', label: 'Display Name', width: 250},
+    {id: 'objectCode', label: 'Extension Code', width: 250},
+    {id: 'name', label: 'Name', width: 250},
     {id: 'field', label: 'Lookup Field', width: 180},
     {id: 'systemDefined', label: 'Managed By', width: 140}
   ];
