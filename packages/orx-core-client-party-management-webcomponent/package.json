@@ -1,0 +1,85 @@
+{
+  "name": "@optum-rx-core/orx-core-client-party-management-webcomponent",
+  "version": "0.0.0",
+  "description": "",
+  "repository": "",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build",
+    "preversion": "yarn build",
+    "postversion": "npx @optum-rx-platform/cli@latest run-script prepare-package-for-npm --quiet && npx @optum-rx-platform/cli@latest run-script prepare-package-for-cdn --quiet",
+    "dev": "vite",
+    "serve": "vite preview"
+  },
+  "main": "./orx-core-client-management.umd.js",
+  "files": [
+    "tsconfig.json",
+    "*.js",
+    "*.js.map",
+    "*.d.ts",
+    "**/*.js",
+    "**/*.js.map",
+    "**/*.d.ts"
+  ],
+  "assets": [
+    "README.md"
+  ],
+  "devDependencies": {
+    "@optum-rx-skyline/components": "^0.5.1",
+    "@vitejs/plugin-react": "^4.4.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "vite": "^6.3.2"
+  },
+  "peerDependencies": {
+    "@mui/material": "^5.10.0",
+    "@optum-rx-skyline/components": "^0.5.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@emotion/cache": "11.10.0",
+    "@emotion/react": "11.10.6",
+    "@mui/material": "^5.10.0",
+    "@mui/system": "^5.10.0",
+    "@optum-rx-core/orx-core-client-party-management": "workspace:*",
+    "@optum-rx-skyline/components": "^0.2.1",
+    "@optum-rx-skyline/themes": "^0.2.1",
+    "@r2wc/core": "^1.0.0",
+    "@r2wc/react-to-web-component": "2.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rollup": "^4.18.0",
+    "tslib": "^2.3.1"
+  },
+  "publishConfig": {
+    "registry": "https://repo1.uhc.com/artifactory/api/npm/npm-local/"
+  },
+  "stableVersion": "0.1.0",
+  "meta": {
+    "generatedBy": "webcomponent-wrapper",
+    "generatedOn": "2025-12-22T09:31:49.367Z",
+    "generatedWith": {
+      "microProductName": "orx-core-client-party-management",
+      "addScriptToRootPackageJson": true,
+      "destinationPackage": "New Package",
+      "packagePath": "orx-core-client-party-management-webcomponent",
+      "packageManager": "yarn",
+      "npmNamespace": "@optum-rx-core",
+      "npmPackageName": "orx-core-client-party-management-webcomponent",
+      "confirmation": true,
+      "yarnDownloadConfirmation": false,
+      "version": "0.0.0",
+      "description": "",
+      "repository": "",
+      "folderType": "Default Folder (packages)",
+      "folderName": ""
+    }
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": "./orx-core-client-party-management.umd.js"
+    }
+  }
+}
