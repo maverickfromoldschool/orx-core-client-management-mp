@@ -2025,9 +2025,7 @@ export function LookupExtensionDialog(props: LookupExtensionDialogProps) {
           </div>
         )}
       </DialogContent>
-      <DialogActions
-        sx={{p: 2, justifyContent: 'flex-end', gap: 1}}
-      >
+      <DialogActions sx={{p: 2, justifyContent: 'flex-end', gap: 1}}>
         {saveError && <Typography sx={{color: '#D32F2F', fontSize: '14px', mr: 'auto'}}>{saveError}</Typography>}
         <Button
           sx={{
